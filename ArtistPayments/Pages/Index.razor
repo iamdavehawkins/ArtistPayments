@@ -4,38 +4,32 @@
 @using System.Text.Json
 
 <div class="page-header">
-    <h3 class="text-center">Spotify Payment Estimator</h3>
+    <h3>Spotify Payment Estimator</h3>
 </div>
 
 <EditForm Model="configSelections">
-    <div class="row">
+    <div class="row text-center">
         <div class="form-group col-md-12">
-            <label for="jsonUploader" class="form-text text-muted">
+            <label for="jsonUploader" class="lead form-text">
                 Upload files from Spotify (e.g. StreamingHistory0.json)
-            </label>
             <InputFile id="jsoUploader" OnChange="@OnInputFileChange" multiple />
+            </label>
         </div>
     </div>
     <div class="row">
-        <div class="form-group col-md-6">
-            <label class="lead" for="subscriptionSelect">
+        <div class="form-group col-md-12">
+            <p class="lead text-center">
                 Assuming a 12 month subscription of
-            </label>
-            <InputSelect id="subscriptionSelect" class="form-control" @bind-Value="configSelections.monthlySubscriptionCost">
+            <InputSelect id="subscriptionSelect" @bind-Value="configSelections.monthlySubscriptionCost">
                 <option selected value="9.99">Individual ($9.99/mo)</option>
                 <option value="12.99">Duo ($12.99/mo)</option>
                 <option value="14.99">Family ($14.99/mo)</option>
                 <option value="4.99">Student ($4.99/mo)</option>
             </InputSelect>
-        </div>
-        <div class="form-group col-md-6">
-            <label class="lead" for="payPerStreamSelect">
                 and that artists are paid
-            </label>
-            <InputNumber id="payPerStreamSelect" class="form-control" @bind-Value="configSelections.payPerStream" step="0.001" />
-            <label class="lead" for="payPerStreamSelect">
+            <span style="font-weight: bolder;">$</span><InputNumber id="payPerStreamSelect" @bind-Value="configSelections.payPerStream" step="0.001" />
                 per stream
-            </label>
+            </p>
         </div>
     </div>
 </EditForm>
@@ -51,19 +45,12 @@
 <div class="container">
     <div class="row">
         <div class="col-sm">
-            @*Add combo and input boxes here inline and style to look like text*@
-            <p class="lead h3 text-center">Assuming 12 months at $@configSelections.monthlySubscriptionCost and that artists are paid $@configSelections.payPerStream/stream</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <p class="h3 text-center">You listened to @totalListens.ToString("N0") tracks and paid a total of $@totalCost.</p>
+            <p class="h4 text-center">You listened to @totalListens.ToString("N0") tracks and paid a total of $@totalCost.</p>
         </div>
     </div>
 </div>
 
 <div class="container">
-
     <div class="row">
         <div class="col-sm">
             <BigStatBoard BoardTitle="Artists" Total="@totalPaidToArtists" Percent="@percentPaidToArtists" />
@@ -74,10 +61,6 @@
     </div>
 </div>
 
-@if (allListens.Count > 0)
-{
-    <p>@allListens[allListens.Count-1].TrackName</p>
-}
 <ListenTable AllListens="@allListens" />
 
 

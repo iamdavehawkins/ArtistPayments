@@ -48,3 +48,23 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+#subscriptionSelect {
+    border: .5px dotted;
+    outline: none;
+    font-weight: bolder;
+    padding: 3px;
+}
+
+#payPerStreamSelect {
+    border: .5px dotted;
+    outline: none;
+    font-weight: bolder;
+    width: 80px;
+    padding: 3px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+}
