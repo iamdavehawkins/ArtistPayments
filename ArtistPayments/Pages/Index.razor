@@ -1,0 +1,104 @@
+﻿@page "/"
+@using System.IO
+@using Newtonsoft.Json
+@using System.Text.Json
+
+<div class="page-header">
+    <h3 class="text-center">Spotify Payment Estimator</h3>
+</div>
+
+<EditForm Model="configSelections">
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label for="jsonUploader" class="form-text text-muted">
+                Upload files from Spotify (e.g. StreamingHistory0.json)
+            </label>
+            <InputFile id="jsoUploader" OnChange="@OnInputFileChange" multiple />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label class="lead" for="subscriptionSelect">
+                Assuming a 12 month subscription of
+            </label>
+            <InputSelect id="subscriptionSelect" class="form-control" @bind-Value="configSelections.monthlySubscriptionCost">
+                <option selected value="9.99">Individual ($9.99/mo)</option>
+                <option value="12.99">Duo ($12.99/mo)</option>
+                <option value="14.99">Family ($14.99/mo)</option>
+                <option value="4.99">Student ($4.99/mo)</option>
+            </InputSelect>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="lead" for="payPerStreamSelect">
+                and that artists are paid
+            </label>
+            <InputNumber id="payPerStreamSelect" class="form-control" @bind-Value="configSelections.payPerStream" step="0.001" />
+            <label class="lead" for="payPerStreamSelect">
+                per stream
+            </label>
+        </div>
+    </div>
+</EditForm>
+
+@{
+    var totalCost = Decimal.Round(12 * configSelections._monthlySubscriptionCost, 2);
+    var totalPaidToArtists = Decimal.Round(totalListens * configSelections.payPerStream, 2);
+    var totalPaidToSpotify = totalCost - totalPaidToArtists;
+    var percentPaidToArtists = Decimal.Round(totalPaidToArtists / totalCost * 100, 2);
+    var percentPaidToSpotify = Decimal.Round(totalPaidToSpotify / totalCost * 100, 2);
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            @*Add combo and input boxes here inline and style to look like text*@
+            <p class="lead h3 text-center">Assuming 12 months at $@configSelections.monthlySubscriptionCost and that artists are paid $@configSelections.payPerStream/stream</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <p class="h3 text-center">You listened to @totalListens.ToString("N0") tracks and paid a total of $@totalCost.</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm">
+            <BigStatBoard BoardTitle="Artists" Total="@totalPaidToArtists" Percent="@percentPaidToArtists" />
+        </div>
+        <div class="col-sm">
+            <BigStatBoard BoardTitle="Spotify" Total="@totalPaidToSpotify" Percent="@percentPaidToSpotify" />
+        </div>
+    </div>
+</div>
+
+@if (allListens.Count > 0)
+{
+    <p>@allListens[allListens.Count-1].TrackName</p>
+}
+<ListenTable AllListens="@allListens" />
+
+
+@code {
+    public string fileContents = "nothing yet";
+    public int totalListens = 0;
+    public List<Listen> allListens = new List<Listen>();
+    public ConfigSelections configSelections = new ConfigSelections();
+
+    public async void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var options = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var fileStream = file.OpenReadStream(maxAllowedSize: 2048 * 1000);
+            allListens.AddRange(await System.Text.Json.JsonSerializer.DeserializeAsync<List<Listen>>(fileStream, options));
+        }
+        totalListens = allListens.Count;
+        StateHasChanged();
+    }
+}

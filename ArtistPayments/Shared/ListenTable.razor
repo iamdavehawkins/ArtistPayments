@@ -1,0 +1,19 @@
+﻿<h4>Most Recent Listens:</h4>
+@if (AllListens.Count > 0)
+{
+    @for (int x = 1; x < 6; x++)
+    {
+        <p>@AllListens[x].TrackName, @AllListens[x].ArtistName</p>
+    }
+}
+else
+{
+    <p>No data uploaded.</p>
+}
+
+@*How many listeners like you they'd need in order to make median income (band members)*@
+
+@code {
+    [Parameter]
+    public List<Listen> AllListens { get; set; }
+}

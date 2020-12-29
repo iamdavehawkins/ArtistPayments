@@ -1,0 +1,24 @@
+﻿<div class="big-stat-board container" >
+    <div class="row title align-items-center">
+        <div class="col-12">
+            <h2 class="text-center">@BoardTitle</h2>
+        </div>
+    </div>
+    <div class="row stat align-items-center">
+        <div class="col-12">
+            <p class="display-1 text-center">$@Total (@Percent%)</p>
+            @*Make red if negative*@
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string BoardTitle { get; set; }
+
+    [Parameter]
+    public decimal Total { get; set; }
+
+    [Parameter]
+    public decimal Percent{ get; set; }
+}
