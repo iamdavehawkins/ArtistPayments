@@ -1,19 +1,40 @@
-﻿<h4>Most Recent Listens:</h4>
+﻿<h4>Top 10 artists by listens:</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Artist</th>
+            <th>Listens</th>
+            <th>$ to Artist</th>
+            <th>Listeners like you for artist to make $50,000</th>
+        </tr>
+    </thead>
 @if (AllListens.Count > 0)
 {
-    @for (int x = 1; x < 6; x++)
+    @foreach(var artistGroup in AllListens.GroupBy(listen => listen.ArtistName).OrderByDescending(g => g.Count()).Take(10))
     {
-        <p>@AllListens[x].TrackName, @AllListens[x].ArtistName</p>
+        var totalPay = Decimal.Round(artistGroup.Count() * PayPerStream, 2);
+        var listenersLikeYou = Decimal.Round(50000 / totalPay, 0);
+        <tr>
+            <td>@artistGroup.Key</td>
+            <td>@artistGroup.Count()</td>
+            <td>$@totalPay</td>
+            <td>@listenersLikeYou.ToString("N0")</td>
+        </tr>
     }
 }
 else
 {
     <p>No data uploaded.</p>
 }
-
-@*How many listeners like you they'd need in order to make median income (band members)*@
+</table>
 
 @code {
+    public IEnumerable<IGrouping<string, Listen>> listensGroupedByArtist;
+
     [Parameter]
     public List<Listen> AllListens { get; set; }
+
+    [Parameter]
+    public Decimal PayPerStream { get; set; }
+
 }

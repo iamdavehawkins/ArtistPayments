@@ -54,6 +54,7 @@ a, .btn-link {
     outline: none;
     font-weight: bolder;
     padding: 3px;
+    background-color: cyan;
 }
 
 #payPerStreamSelect {
@@ -62,6 +63,7 @@ a, .btn-link {
     font-weight: bolder;
     width: 80px;
     padding: 3px;
+    background-color: cyan;
 }
 
 input[type=number]::-webkit-inner-spin-button,
